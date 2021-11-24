@@ -11,11 +11,17 @@ variable "vpc_instance_tenancy" {
 
 variable "vpc_name" {}
 
-variable "public_cidrs" {
+variable "public_cidrs1" {
   type = list(string)
 }
 
-variable "public_subnet_name" {}
+variable "public_cidrs2" {
+  type = list(string)
+}
 
-variable "sg_name" {}
+variable "public_subnet1_name" {}
+variable "public_subnet2_name" {}
+
+variable "sg_name1" {}
+variable "sg_name2" {}
 variable "gateway_id" {}

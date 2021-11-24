@@ -20,10 +20,11 @@ data "aws_ami" "Windows" {
 
 ## EC2 Instance Creation ##
 resource "aws_instance" "ec2_instances_final" {
-  count                  = var.ec2_count
-  ami                    = data.aws_ami.Windows.id
+  count = var.ec2_count
+  # ami   = data.aws_ami.Windows.id
+  ami                    = var.ami_type
   instance_type          = var.instance_type
-  key_name               = "ec2_login_key"
+  key_name               = "master_kp"
   vpc_security_group_ids = ["${var.security_group}"]
   subnet_id              = element(var.subnets, count.index)
   user_data              = data.template_file.userdata_win.rendered

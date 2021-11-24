@@ -23,3 +23,5 @@ variable "ebs_count" {
 variable "ebs_vol_size" {
   default = 10
 }
+
+variable "ami_type" {}

@@ -49,38 +49,38 @@ resource "aws_security_group" "private-sg" {
   vpc_id = aws_vpc.CoreCard_VPC_Final.id
 }
 
-# Ingress HTTP rule
-resource "aws_security_group_rule" "http_inbound_access" {
-  description       = "HTTP"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "TCP"
+# # Ingress All-ICMP Ipv4 rule
+# resource "aws_security_group_rule" "allicmp_inbound_access" {
+#   description       = "All ICMP-IPv4"
+#   from_port         = -1
+#   to_port           = -1
+#   protocol          = "ICMP"
+#   cidr_blocks       = ["0.0.0.0/0"]
+#   type              = "ingress"
+#   security_group_id = aws_security_group.private-sg.id
+# }
+
+# Ingress All Traffic rule
+resource "aws_security_group_rule" "all_inbound_access" {
+  description       = "All traffic"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
   type              = "ingress"
   security_group_id = aws_security_group.private-sg.id
 }
 
-# Ingress HTTPS rule
-resource "aws_security_group_rule" "https_inbound_access" {
-  description       = "HTTPS"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "TCP"
-  cidr_blocks       = ["0.0.0.0/0"]
-  type              = "ingress"
-  security_group_id = aws_security_group.private-sg.id
-}
-
-# Ingress HTTPS rule
-resource "aws_security_group_rule" "rdp_inbound_access" {
-  description       = "RDP"
-  from_port         = 3389
-  to_port           = 3389
-  protocol          = "TCP"
-  cidr_blocks       = ["0.0.0.0/0"]
-  type              = "ingress"
-  security_group_id = aws_security_group.private-sg.id
-}
+# # Ingress RDP rule
+# resource "aws_security_group_rule" "rdp_inbound_access" {
+#   description       = "RDP"
+#   from_port         = 3389
+#   to_port           = 3389
+#   protocol          = "TCP"
+#   cidr_blocks       = ["0.0.0.0/0"]
+#   type              = "ingress"
+#   security_group_id = aws_security_group.private-sg.id
+# }
 
 # All OutBound Access
 resource "aws_security_group_rule" "all_outbound_access" {

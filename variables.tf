@@ -1,6 +1,6 @@
 
 variable "region" {
-  default = "ap-south-1"
+  default = "us-west-1"
 }
 
 ## KMS server variable ##
@@ -13,7 +13,9 @@ variable "KMS_inst_count_tf" {
 variable "KMS_ebs_size_tf" {
   default = 10
 }
-
+variable "KMS_ami_type" {
+  default = "ami-0f24128138a6f2eaa"
+}
 
 ## Web Server Variables ##
 variable "web_inst_type_tf" {
@@ -24,6 +26,9 @@ variable "web_inst_count_tf" {
 }
 variable "web_ebs_size_tf" {
   default = 10
+}
+variable "web_ami_type" {
+  default = "ami-082fd985a931262f0"
 }
 
 
@@ -37,7 +42,9 @@ variable "Auth_inst_count_tf" {
 variable "Auth_ebs_size_tf" {
   default = 10
 }
-
+variable "Auth_ami_type" {
+  default = "ami-0258d389bc7bbbdc8"
+}
 
 ## ISSU Server Variables ##
 variable "ISSU_inst_type_tf" {
@@ -48,6 +55,9 @@ variable "ISSU_inst_count_tf" {
 }
 variable "ISSU_ebs_size_tf" {
   default = 10
+}
+variable "ISSU_ami_type" {
+  default = "ami-0c2536d4b4021ccc5"
 }
 
 
@@ -62,6 +72,9 @@ variable "TNP_inst_count_tf" {
 variable "TNP_ebs_size_tf" {
   default = 10
 }
+variable "TNP_ami_type" {
+  default = "ami-06b3f8e6dc3576785"
+}
 
 
 ## SVCE Server Variables ##
@@ -73,6 +86,9 @@ variable "SVCE_inst_count_tf" {
 }
 variable "SVCE_ebs_size_tf" {
   default = 10
+}
+variable "SVCE_ami_type" {
+  default = "ami-04cc58afecc811059"
 }
 
 
@@ -86,31 +102,9 @@ variable "WKF_inst_count_tf" {
 variable "WKF_ebs_size_tf" {
   default = 10
 }
-
-
-## MC_Source Server Variables ##
-variable "SRC_inst_type_tf" {
-  default = "t2.micro"
+variable "WKF_ami_type" {
+  default = "ami-04cc58afecc811059"
 }
-variable "SRC_inst_count_tf" {
-  default = 2
-}
-variable "SRC_ebs_size_tf" {
-  default = 10
-}
-
-
-## MC_Sink Server Variables ##
-variable "SINK_inst_type_tf" {
-  default = "t2.micro"
-}
-variable "SINK_inst_count_tf" {
-  default = 2
-}
-variable "SINK_ebs_size_tf" {
-  default = 10
-}
-
 
 ## File Processing Workflow Server Variables ##
 variable "BAT_inst_type_tf" {
@@ -122,7 +116,9 @@ variable "BAT_inst_count_tf" {
 variable "BAT_ebs_size_tf" {
   default = 10
 }
-
+variable "BAT_ami_type" {
+  default = "ami-04cc58afecc811059"
+}
 
 ## WCF Server Variables ##
 variable "WCF_inst_type_tf" {
@@ -134,24 +130,13 @@ variable "WCF_inst_count_tf" {
 variable "WCF_ebs_size_tf" {
   default = 10
 }
-
-
-
-## Report Server Variables ##
-variable "RPTS_inst_type_tf" {
-  default = "t2.micro"
-}
-variable "RPTS_inst_count_tf" {
-  default = 2
-}
-variable "RPTS_ebs_size_tf" {
-  default = 10
+variable "WCF_ami_type" {
+  default = "ami-0f4309737a61f885a"
 }
 
-
-## Report Delivery Server Variables ##
+## Report Delivery & SSRS Server Variables ##
 variable "RPTD_inst_type_tf" {
-  default = "t2.micro"
+  default = "t2.2xlarge"
 }
 variable "RPTD_inst_count_tf" {
   default = 2
@@ -159,17 +144,60 @@ variable "RPTD_inst_count_tf" {
 variable "RPTD_ebs_size_tf" {
   default = 10
 }
-
-
-## DB Server Variables ##
-variable "db_inst_type_tf" {
-  default = "t2.micro"
+variable "RPTD_ami_type" {
+  default = "ami-04cc58afecc811059"
 }
-variable "db_inst_count_tf" {
+
+## Primary DB Server Variables ##
+variable "DB_inst_type_tf" {
+  default = "t2.2xlarge"
+}
+variable "DB_inst_count_tf" {
   default = 2
 }
-variable "db_ebs_size_tf" {
+# variable "DB_ebs_count_tf" {
+#   default = 6
+# }
+variable "DB_ebs_size_tf" {
   default = 100
+}
+
+variable "DB_ami_type" {
+  default = "ami-01f724e8c07ceb576"
+}
+
+## Replication DB Server Variables ##
+variable "RPLDB_inst_type_tf" {
+  default = "t2.2xlarge"
+}
+variable "RPLDB_inst_count_tf" {
+  default = 2
+}
+# variable "RPLDB_ebs_count_tf" {
+#   default = 6
+# }
+variable "RPLDB_ebs_size_tf" {
+  default = 100
+}
+variable "RPLDB_ami_type" {
+  default = "ami-01f724e8c07ceb576"
+}
+
+## Distribution DB Server Variables ##
+variable "DIST_DB_inst_type_tf" {
+  default = "t2.2xlarge"
+}
+variable "DIST_DB_inst_count_tf" {
+  default = 2
+}
+# variable "DIST_DB_ebs_count_tf" {
+#   default = 6
+# }
+variable "DIST_DB_ebs_size_tf" {
+  default = 100
+}
+variable "DIST_DB_ami_type" {
+  default = "ami-01f724e8c07ceb576"
 }
 
 ## Bastion Host ##
@@ -179,4 +207,22 @@ variable "b_host_count_tf" {
 
 variable "b_host_type_tf" {
   default = "t2.micro"
+}
+
+variable "bastion_ami_type" {
+  default = ""
+}
+
+## Domain Controller ##
+variable "DC_inst_type_tf" {
+  default = "t2.micro"
+}
+variable "DC_inst_count_tf" {
+  default = 2
+}
+variable "DC_ebs_size_tf" {
+  default = 10
+}
+variable "DC_ami_type" {
+  default = "ami-04cc58afecc811059"
 }

@@ -1,7 +1,5 @@
-## Data - Availaibility Zone Section ##
 data "aws_availability_zones" "available" {}
 
-## Data - AMI Section ##
 data "aws_ami" "Windows" {
   most_recent = true
 
@@ -18,13 +16,12 @@ data "aws_ami" "Windows" {
   owners = ["801119661308"]
 }
 
-
-## Bastion Host Creation ##
 resource "aws_instance" "bastion_host" {
   count                  = var.b_host_count
   ami                    = data.aws_ami.Windows.id
+  # ami                    = var.ami_type
   instance_type          = var.instance_type
-  key_name               = "ec2_login_key"
+  key_name               = "master_kp"
   vpc_security_group_ids = ["${var.security_group}"]
   subnet_id              = element(var.subnets, count.index)
   user_data              = data.template_file.userdata_win.rendered
@@ -36,7 +33,6 @@ resource "aws_instance" "bastion_host" {
   }
 }
 
-## User-Data Section ##
 data "template_file" "userdata_win" {
   template = <<EOF
 <powershell>

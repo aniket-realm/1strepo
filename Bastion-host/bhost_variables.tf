@@ -1,5 +1,3 @@
-## Bastion Host Variable Declaration ##
-
 variable "instance_type" {
   default = "t2.micro"
 }
@@ -15,3 +13,5 @@ variable "b_host_name" {}
 variable "b_host_count" {
   default = 2
 }
+
+variable "ami_type" {}

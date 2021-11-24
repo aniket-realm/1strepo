@@ -1,5 +1,3 @@
-## Bastion Host Output variables ##
-
 output "instance1_id" {
   value = element(aws_instance.bastion_host.*.id, 1)
 }

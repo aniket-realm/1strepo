@@ -1,12 +1,15 @@
 # VPC-webserver Creation Module#
 module "vpc_webserver" {
-  source             = "./VPC-Public"
-  vpc_cidr_block     = "10.0.0.0/24"
-  public_cidrs       = ["10.0.0.0/26", "10.0.0.64/26"]
-  vpc_name           = "Webserver_VPC"
-  public_subnet_name = "Webserver_Public_Subnet"
-  sg_name            = "Webserver_sg"
-  gateway_id         = module.IGW_webserver.ig_id
+  source              = "./VPC-Public"
+  vpc_cidr_block      = "10.0.0.0/24"
+  public_cidrs1       = ["10.0.0.0/26", "10.0.0.64/26"]
+  public_cidrs2       = ["10.0.0.128/26", "10.0.0.192/26"]
+  vpc_name            = "Webserver_VPC"
+  public_subnet1_name = "Webserver_Public_Subnet"
+  public_subnet2_name = "BastionHost_Public_Subnet"
+  sg_name1            = "Webserver_sg"
+  sg_name2            = "BastionHost_sg"
+  gateway_id          = module.IGW_webserver.ig_id
 }
 
 module "IGW_webserver" {
@@ -18,6 +21,7 @@ module "IGW_webserver" {
 ## Web Server Creation Module ##
 module "web_server" {
   source         = "./ec2"
+  ami_type       = var.web_ami_type
   ec2_count      = var.web_inst_count_tf
   ebs_count      = var.web_inst_count_tf
   instance_type  = var.web_inst_type_tf
@@ -27,9 +31,10 @@ module "web_server" {
   subnets        = module.vpc_webserver.public_subnets
 }
 
-## Bastion Host Creation ##
+# Bastion Host Creation ##
 module "bastion_host" {
   source         = "./Bastion-host"
+  ami_type       = var.bastion_ami_type
   b_host_count   = var.b_host_count_tf
   instance_type  = var.b_host_type_tf
   security_group = module.vpc_webserver.security_group
@@ -37,7 +42,7 @@ module "bastion_host" {
   b_host_name    = "JumpServer"
 }
 
-##  webserver loadbalancer Configuration ##
+## webserver loadbalancer Configuration ##
 module "nlb" {
   source         = "./nlb"
   vpc_id         = module.vpc_webserver.vpc_id
@@ -60,6 +65,7 @@ module "vpc_appserver" {
 ## CoreAuth Server Creation Module ##
 module "Auth_server" {
   source         = "./ec2"
+  ami_type       = var.Auth_ami_type
   ec2_count      = var.Auth_inst_count_tf
   ebs_count      = var.Auth_inst_count_tf
   instance_type  = var.Auth_inst_type_tf
@@ -72,6 +78,7 @@ module "Auth_server" {
 ## CoreIssue Server Creation Module ##
 module "ISSU_server" {
   source         = "./ec2"
+  ami_type       = var.ISSU_ami_type
   ec2_count      = var.ISSU_inst_count_tf
   ebs_count      = var.ISSU_inst_count_tf
   instance_type  = var.ISSU_inst_type_tf
@@ -84,6 +91,7 @@ module "ISSU_server" {
 ## TNP Server Creation Module ##
 module "TNP_server" {
   source         = "./ec2"
+  ami_type       = var.TNP_ami_type
   ec2_count      = var.TNP_inst_count_tf
   ebs_count      = var.TNP_inst_count_tf
   instance_type  = var.TNP_inst_type_tf
@@ -93,9 +101,10 @@ module "TNP_server" {
   subnets        = module.vpc_appserver.private_subnets
 }
 
-## SVCE Server Creation Module ##
+## Services AppServer - SVCE Server Creation Module ##
 module "SVCE_server" {
   source         = "./ec2"
+  ami_type       = var.SVCE_ami_type
   ec2_count      = var.SVCE_inst_count_tf
   ebs_count      = var.SVCE_inst_count_tf
   instance_type  = var.SVCE_inst_type_tf
@@ -105,9 +114,10 @@ module "SVCE_server" {
   subnets        = module.vpc_appserver.private_subnets
 }
 
-## WKF Server Creation Module ##
+## WKF- Workflow Server Creation Module ##
 module "WKF_server" {
   source         = "./ec2"
+  ami_type       = var.WKF_ami_type
   ec2_count      = var.WKF_inst_count_tf
   ebs_count      = var.WKF_inst_count_tf
   instance_type  = var.WKF_inst_type_tf
@@ -117,33 +127,10 @@ module "WKF_server" {
   subnets        = module.vpc_appserver.private_subnets
 }
 
-## MC_Source Server Creation Module ##
-module "SRC_server" {
-  source         = "./ec2"
-  ec2_count      = var.SRC_inst_count_tf
-  ebs_count      = var.SRC_inst_count_tf
-  instance_type  = var.SRC_inst_type_tf
-  ec2_name       = "SRC"
-  ebs_vol_size   = var.SRC_ebs_size_tf
-  security_group = module.vpc_appserver.security_group
-  subnets        = module.vpc_appserver.private_subnets
-}
-
-## MC_Sink Server Creation Module ##
-module "SINK_server" {
-  source         = "./ec2"
-  ec2_count      = var.SINK_inst_count_tf
-  ebs_count      = var.SINK_inst_count_tf
-  instance_type  = var.SINK_inst_type_tf
-  ec2_name       = "SINK"
-  ebs_vol_size   = var.SINK_ebs_size_tf
-  security_group = module.vpc_appserver.security_group
-  subnets        = module.vpc_appserver.private_subnets
-}
-
-## File Processing Workflow Server Creation Module ##
+# File Processing Workflow Server Creation Module ##
 module "BAT_server" {
   source         = "./ec2"
+  ami_type       = var.BAT_ami_type
   ec2_count      = var.BAT_inst_count_tf
   ebs_count      = var.BAT_inst_count_tf
   instance_type  = var.BAT_inst_type_tf
@@ -153,33 +140,23 @@ module "BAT_server" {
   subnets        = module.vpc_appserver.private_subnets
 }
 
-## WCF Server Creation Module ##
+# ## WCF Server Creation Module ##
 module "WCF_server" {
   source         = "./ec2"
+  ami_type       = var.WCF_ami_type
   ec2_count      = var.WCF_inst_count_tf
   ebs_count      = var.WCF_inst_count_tf
   instance_type  = var.WCF_inst_type_tf
   ec2_name       = "WCF"
-  ebs_vol_size   = var.WCF_ebs_size_tf
+  # ebs_vol_size   = var.WCF_ebs_size_tf
   security_group = module.vpc_appserver.security_group
   subnets        = module.vpc_appserver.private_subnets
 }
 
-## Report Server Creation Module ##
-module "RPTS_server" {
-  source         = "./ec2"
-  ec2_count      = var.RPTS_inst_count_tf
-  ebs_count      = var.RPTS_inst_count_tf
-  instance_type  = var.RPTS_inst_type_tf
-  ec2_name       = "RPTS"
-  ebs_vol_size   = var.RPTS_ebs_size_tf
-  security_group = module.vpc_appserver.security_group
-  subnets        = module.vpc_appserver.private_subnets
-}
-
-## Report Delivery Server Creation Module ##
+## Report Server(SSRS/RPTS) & Report Delivery(RPTD) Server Creation Module ##
 module "RPTD_server" {
   source         = "./ec2"
+  ami_type       = var.RPTD_ami_type
   ec2_count      = var.RPTD_inst_count_tf
   ebs_count      = var.RPTD_inst_count_tf
   instance_type  = var.RPTD_inst_type_tf
@@ -189,6 +166,18 @@ module "RPTD_server" {
   subnets        = module.vpc_appserver.private_subnets
 }
 
+## Domain Controller Server Creation Module ##
+module "DC_server" {
+  source         = "./ec2"
+  ami_type       = var.DC_ami_type
+  ec2_count      = var.DC_inst_count_tf
+  ebs_count      = var.DC_inst_count_tf
+  instance_type  = var.DC_inst_type_tf
+  ec2_name       = "DC"
+  ebs_vol_size   = var.DC_ebs_size_tf
+  security_group = module.vpc_appserver.security_group
+  subnets        = module.vpc_appserver.private_subnets
+}
 
 ## VPC-KMS Creation Module ##
 module "vpc_kms" {
@@ -203,6 +192,7 @@ module "vpc_kms" {
 ## KMS Server Creation Module ##
 module "kms_server" {
   source         = "./ec2"
+  ami_type       = var.KMS_ami_type
   ec2_count      = var.KMS_inst_count_tf
   ebs_count      = var.KMS_inst_count_tf
   instance_type  = var.KMS_inst_type_tf
@@ -222,14 +212,41 @@ module "vpc_db" {
   sg_name             = "DB_sg"
 }
 
-## KMS Server Creation Module ##
+## DB Server Creation Module ##
 module "db_server" {
   source         = "./ec2"
-  ec2_count      = var.db_inst_count_tf
-  ebs_count      = var.db_inst_count_tf
-  instance_type  = var.db_inst_type_tf
+  ami_type       = var.DB_ami_type
+  ec2_count      = var.DB_inst_count_tf
+  ebs_count      = var.DB_inst_count_tf
+  instance_type  = var.DB_inst_type_tf
+  ec2_name       = "primary_db"
+  ebs_vol_size   = var.DB_ebs_size_tf
+  security_group = module.vpc_db.security_group
+  subnets        = module.vpc_db.private_subnets
+}
+
+## Replication DB Server Creation Module ##
+module "rpl_db_server" {
+  source         = "./ec2"
+  ami_type       = var.RPLDB_ami_type
+  ec2_count      = var.RPLDB_inst_count_tf
+  ebs_count      = var.RPLDB_inst_count_tf
+  instance_type  = var.RPLDB_inst_type_tf
   ec2_name       = "db"
-  ebs_vol_size   = var.db_ebs_size_tf
+  ebs_vol_size   = var.RPLDB_ebs_size_tf
+  security_group = module.vpc_db.security_group
+  subnets        = module.vpc_db.private_subnets
+}
+
+## Distribution DB Server Creation Module ##
+module "dist_db_server" {
+  source         = "./ec2"
+  ami_type       = var.DIST_DB_ami_type
+  ec2_count      = var.DIST_DB_inst_count_tf
+  ebs_count      = var.DIST_DB_inst_count_tf
+  instance_type  = var.DIST_DB_inst_type_tf
+  ec2_name       = "db"
+  ebs_vol_size   = var.DIST_DB_ebs_size_tf
   security_group = module.vpc_db.security_group
   subnets        = module.vpc_db.private_subnets
 }
@@ -243,6 +260,25 @@ module "peer_vpc_webserver_appserver" {
   peer_region      = var.region
   vpc_peering_name = "peering_vpc_webserver_appserver"
 }
+
+module "peer_vpc_webserver_kmsserver" {
+  source           = "./VPC-Peering"
+  peer_owner_id    = "212335697154"
+  peer_vpc_id      = module.vpc_kms.vpc_id
+  local_vpc_id     = module.vpc_webserver.vpc_id
+  peer_region      = var.region
+  vpc_peering_name = "peering_vpc_webserver_appserver"
+}
+
+module "peer_vpc_webserver_databaseserver" {
+  source           = "./VPC-Peering"
+  peer_owner_id    = "212335697154"
+  peer_vpc_id      = module.vpc_db.vpc_id
+  local_vpc_id     = module.vpc_webserver.vpc_id
+  peer_region      = var.region
+  vpc_peering_name = "peering_vpc_webserver_appserver"
+}
+
 
 #VPC Peering vpc_appserver<->vpc_kms
 module "peer_vpc_appserver_kms" {
